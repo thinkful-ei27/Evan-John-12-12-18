@@ -4,7 +4,10 @@ const api = function() {
   const BASE_URL = 'https://thinkful-list-api.herokuapp.com/evanjohn';
 
   const getItems = function(callback) {
-    $.getJSON(`${BASE_URL}/items`, callback);
+    $.getJSON(`${BASE_URL}/items`, callback).fail(function (request, status, error) {
+      const err = JSON.parse(request.responseText).message;
+      console.log(err);
+  });
   };
 
   const createItem = function(name, callback) {
@@ -17,7 +20,11 @@ const api = function() {
       method: 'POST',
       contentType: 'application/json',
       data: newItem,
-      success: callback
+      success: callback,
+      error: function (request, status, error) {
+        const err = JSON.parse(request.responseText).message;
+        console.log(err);
+    }
     });
   };
 
@@ -27,13 +34,31 @@ const api = function() {
       method: 'PATCH',
       contentType: 'application/json',
       data: JSON.stringify(updateData),
-      success: callback
+      success: callback,
+      error: function (request, status, error) {
+        const err = JSON.parse(request.responseText).message;
+        console.log(err);
+    }
     });
   };
+
+  const deleteItem = function (id, callback) {
+    $.ajax({
+      url: `${BASE_URL}/items/${id}`,
+      method: 'DELETE',
+      contentType: 'application/json', 
+      success: callback,
+      error: function (request, status, error) {
+        const err = JSON.parse(request.responseText).message;
+        console.log(err);
+    }
+    });
+  }
 
   return {
     getItems,
     createItem,
-    updateItem
+    updateItem,
+    deleteItem
   };
 }();

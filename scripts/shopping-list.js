@@ -88,12 +88,15 @@ const shoppingList = (function () {
       const found = store.findById(id);
       const opposite = (!found.checked);
       const updatedItem = {checked: opposite};
-      api.updateItem(id, updatedItem, function(res) {
+      api.updateItem(id, updatedItem, function() {
+        
         store.findAndUpdate(id, updatedItem);
         render();
+      
       });
     });
   }
+
 
   function handleDeleteItemClicked() {
     // like in `handleItemCheckClicked`, we use event delegation
@@ -101,9 +104,12 @@ const shoppingList = (function () {
       // get the index of the item in store.items
       const id = getItemIdFromElement(event.currentTarget);
       // delete the item
-      store.findAndDelete(id);
-      // render the updated shopping list
-      render();
+      api.deleteItem(id, () => {
+        store.findAndDelete(id);
+        // render the updated shopping list
+        render();
+      });
+     
     });
   }
 
